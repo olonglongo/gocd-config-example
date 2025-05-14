@@ -1,0 +1,37 @@
+format_version: 10
+pipelines:
+  test_pipeline_with_runif:
+    environment_variables:
+      DEPLOYMENT: test
+    group: defaultGroup
+    materials:
+      git_repo:
+        git: https://github.com/laravel/laravel.git
+        branch: master
+    stages:
+    - build-stage:
+        jobs:
+          exec-jobs:
+            tasks:
+            - exec:
+                command: eee
+            - exec: # this task will run if the prev fails
+                run_if: failed
+                command: echo failed
+            - exec:
+                command: bash
+                arguments:
+                - "-c"
+                - "echo \"Does this task run??\""
+            - exec:
+                run_if: failed
+                command: bash
+                arguments:
+                - "-c"
+                - "echo \"Running it if the job's status is failed.\""
+            - exec:
+                run_if: any
+                command: bash
+                arguments:
+                - "-c"
+                - "echo \"This task runs irrespective of job has succeeded or failed.\" "
