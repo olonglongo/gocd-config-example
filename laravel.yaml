@@ -57,4 +57,37 @@ pipelines:
 
                     ./composer.phar install --no-dev --optimize-autoloader
 
+    - deploy-stage:
+        jobs:
+          build:
+            tasks:
+            - exec:
+                command: rsync 
+                arguments:
+                  - -avz 
+                  - --rsync-path='sudo rsync' 
+                  - ${SRCPATH}/ 
+                  - 10.13.0.41:/mnt/htdocs/laravel/
+            - exec:
+                command: ssh sudo chown -R apache.apache
+                arguments:
+                  - 10.13.0.41 
+                  - sudo 
+                  - chown 
+                  - -R
+                  - apache.apache
+                  - /mnt/htdocs/laravel/
+              - exec:
+                command: ssh sudo chown -R apache.apache
+                arguments:
+                  - 10.13.0.41 
+                  - cd 
+                  - /mnt/htdocs/laravel/
+                  - ;
+                  - sudo 
+                  - php 
+                  - artisan 
+                  - config:cache
+                  - ;
+
  
