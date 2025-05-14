@@ -19,8 +19,10 @@ pipelines:
           type: manual
           allow_only_on_success: false
           authorization:
-            roles: ["dev"]
-            users: ["dev"]
+            roles:
+              - dev
+            users:
+              - dev
         jobs:
           build:
             tasks:
