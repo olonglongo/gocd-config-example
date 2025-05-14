@@ -14,70 +14,70 @@ pipelines:
         git: https://github.com/laravel/laravel.git
         branch: master
     stages:
-    - build-stage:
-        - approval:
-            allow_only_on_success: false
-            authorization:
-              roles: ["dev"]
-              users: ["dev"]
+      - name: build-stage
+        approval:
+          type: manual
+          allow_only_on_success: false
+          authorization:
+            roles: ["dev"]
+            users: ["dev"]
         jobs:
           build:
             tasks:
-            - exec:
-                command: env
-            - exec:
-                command: docker
-                arguments:
-                  - run
-                  - --rm
-                  - -v
-                  - /var/lib/go-agent/pipelines/build_laravel:/app
-                  - -w
-                  - /app
-                  - php:8.4-fpm
-                  - bash
-                  - -c
-                  - |
-                    set -euo pipefail
+              - exec:
+                  command: env
+              - exec:
+                  command: docker
+                  arguments:
+                    - run
+                    - --rm
+                    - -v
+                    - /var/lib/go-agent/pipelines/build_laravel:/app
+                    - -w
+                    - /app
+                    - php:8.4-fpm
+                    - bash
+                    - -c
+                    - |
+                      set -euo pipefail
 
-                    docker-php-source extract
-                    cd /usr/src/php/ext/pdo_mysql
-                    phpize
-                    ./configure
-                    make
-                    make install
+                      docker-php-source extract
+                      cd /usr/src/php/ext/pdo_mysql
+                      phpize
+                      ./configure
+                      make
+                      make install
 
-                    cd /usr/local/etc/php/conf.d
-                    echo extension=pdo_mysql.so > pdo_mysql.ini
-                    cat pdo_mysql.ini
+                      cd /usr/local/etc/php/conf.d
+                      echo extension=pdo_mysql.so > pdo_mysql.ini
+                      cat pdo_mysql.ini
 
-                    apt-get update
-                    apt-get install -y git zip
+                      apt-get update
+                      apt-get install -y git zip
 
-                    cd /app
-                    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-                    php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-                    php composer-setup.php
-                    php -r "unlink('composer-setup.php');"
+                      cd /app
+                      php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+                      php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+                      php composer-setup.php
+                      php -r "unlink('composer-setup.php');"
 
-                    ./composer.phar install --no-dev --optimize-autoloader
+                      ./composer.phar install --no-dev --optimize-autoloader
+              - exec:
+                  command: sudo
+                  arguments:
+                    - chown 
+                    - -R 
+                    - go:go
+                    - /var/lib/go-agent/pipelines
 
-            - exec:
-                command: sudo
-                arguments:
-                  - chown 
-                  - -R 
-                  - go:go
-                  - /var/lib/go-agent/pipelines
-
-    - deploy-stage:
+      - name: deploy-stage
         jobs:
           build:
             tasks:
-            - exec:
-                command: bash
-                arguments:
-                  - -c
-                  - rsync -avz --rsync-path='sudo rsync' /var/lib/go-agent/pipelines/build_laravel/ root@10.13.0.41:/mnt/htdocs/laravel/ && ssh root@10.13.0.41 "sudo chown -R apache.apache /mnt/htdocs/laravel/ && cd /mnt/htdocs/laravel/"
+              - exec:
+                  command: bash
+                  arguments:
+                    - -c
+                    - rsync -avz --rsync-path='sudo rsync' /var/lib/go-agent/pipelines/build_laravel/ root@10.13.0.41:/mnt/htdocs/laravel/ && ssh root@10.13.0.41 "sudo chown -R apache.apache /mnt/htdocs/laravel/ && cd /mnt/htdocs/laravel/"
 
  
