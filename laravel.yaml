@@ -1,6 +1,13 @@
 format_version: 10
 pipelines:
   build_laravel:
+    authorization:
+      view:
+        users: [dev]  # dev user can view
+      operate:
+        users: [dev]  # dev user can operate/run
+      admins:
+        roles: [admin]  # admin role can do everything
     environment_variables:
       DEPLOYMENT: test
       APP_ENV: testing
