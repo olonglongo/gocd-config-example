@@ -8,7 +8,6 @@ pipelines:
       DEPLOY_SERVER: your-server-ip
       DEPLOY_USER: deploy
       DEPLOY_PATH: /var/www/laravel
-      WORKDIR: ${WRAPPER_WORKING_DIR}/pipelines/${GO_PIPELINE_NAME}
     group: defaultGroup
     materials:
       git_repo:
@@ -27,7 +26,7 @@ pipelines:
                   - run
                   - --rm
                   - -v
-                  - "${WORKDIR}:/app"
+                  - /var/lib/go-agent/pipelines/build_laravel:/app
                   - -w
                   - /app
                   - php:8.4-fpm
