@@ -73,6 +73,6 @@ pipelines:
                 command: bash
                 arguments:
                   - -c
-                  - rsync -avz --rsync-path='sudo rsync' /var/lib/go-agent/pipelines/build_laravel/ 10.13.0.41:/mnt/htdocs/laravel/ && ssh 10.13.0.41 "sudo chown -R apache.apache /mnt/htdocs/laravel/ && cd /mnt/htdocs/laravel/ && sudo php artisan config:cache"
+                  - rsync -avz --rsync-path='sudo rsync' /var/lib/go-agent/pipelines/build_laravel/ 10.13.0.41:/mnt/htdocs/laravel/ && ssh 10.13.0.41 "sudo chown -R apache.apache /mnt/htdocs/laravel/ && cd /mnt/htdocs/laravel/"
 
  
