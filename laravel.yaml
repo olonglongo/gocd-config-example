@@ -56,13 +56,6 @@ pipelines:
                     php -r "unlink('composer-setup.php');"
 
                     ./composer.phar install --no-dev --optimize-autoloader
-            - exec:
-                command: sudo
-                arguments:
-                  - chown
-                  - -R
-                  - go:go
-                  - /var/lib/go-agent/pipelines/build_laravel
                   
     - deploy-stage:
         jobs:
