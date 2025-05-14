@@ -1,0 +1,20 @@
+format_version: 10
+pipelines:
+  pipeline_with_success:
+    environment_variables:
+      DEPLOYMENT: test
+    group: defaultGroup
+    materials:
+      git_repo:
+        git: https://github.com/laravel/laravel.git
+        branch: master
+    stages:
+    - build-stage:
+        jobs:
+          exec-jobs:
+            tasks:
+            - exec:
+                command: bash
+                arguments:
+                - "-c"
+                - "echo \"This task runs irrespective of job has succeeded.\" "
