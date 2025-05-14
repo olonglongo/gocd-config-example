@@ -3,6 +3,7 @@ pipelines:
   test_pipeline_with_runif:
     environment_variables:
       DEPLOYMENT: test
+    group: defaultGroup
     materials:
       git_repo:
         git: https://github.com/laravel/laravel.git
