@@ -1,6 +1,6 @@
 format_version: 10
 pipelines:
-  build_laravel:
+  artifact_build:
     environment_variables:
       DEPLOYMENT: test
       APP_ENV: testing
