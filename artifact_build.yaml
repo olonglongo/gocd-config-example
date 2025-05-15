@@ -32,7 +32,7 @@ pipelines:
                   - run
                   - --rm
                   - -v
-                  - /var/lib/go-agent/pipelines/artifact_build:/app
+                  - /var/lib/go-agent/pipelines/build_laravel:/app
                   - -w
                   - /app
                   - php:8.4-fpm
@@ -66,11 +66,17 @@ pipelines:
             - exec:
                 command: sudo
                 arguments:
-                  - chown 
-                  - -R 
+                  - chown
+                  - -R
                   - go:go
                   - /var/lib/go-agent/pipelines
-            artifacts:
-              - build:
-                  source: vendor
-                  destination: vendor
+            - publish_pluggable_artifact:
+                # Please verify this ID on your GoCD server
+                plugin_id: cd.go.artifact.s3 
+                # MUST match the ID of your S3 Artifact Store in GoCD Admin
+                store_id: gocd-artifacts-bucket           
+                artifact_id: LaravelVendor
+                configuration:
+                  Source: "vendor"
+                  # Example S3 destination path. Adjust as needed.
+                  Destination: "laravel-artifacts/${GO_PIPELINE_NAME}/${GO_PIPELINE_COUNTER}/${GO_STAGE_NAME}/vendor"
