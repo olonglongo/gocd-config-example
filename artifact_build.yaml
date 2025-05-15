@@ -70,7 +70,7 @@ pipelines:
                   - -R 
                   - go:go
                   - /var/lib/go-agent/pipelines
-
-            - artifact:
-                source: /var/lib/go-agent/pipelines/build_laravel/vendor
-                destination: vendor
+            artifacts:
+              - build:
+                  source: /var/lib/go-agent/pipelines/build_laravel/vendor
+                  destination: vendor
