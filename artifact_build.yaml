@@ -72,5 +72,5 @@ pipelines:
                   - /var/lib/go-agent/pipelines
             artifacts:
               - build:
-                  source: /var/lib/go-agent/pipelines/artifact_build/vendor
+                  source: vendor
                   destination: vendor
