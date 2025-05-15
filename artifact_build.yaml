@@ -32,7 +32,7 @@ pipelines:
                   - run
                   - --rm
                   - -v
-                  - /var/lib/go-agent/pipelines/build_laravel:/app
+                  - /var/lib/go-agent/pipelines/artifact_build:/app
                   - -w
                   - /app
                   - php:8.4-fpm
@@ -72,5 +72,5 @@ pipelines:
                   - /var/lib/go-agent/pipelines
             artifacts:
               - build:
-                  source: /var/lib/go-agent/pipelines/build_laravel/vendor
+                  source: /var/lib/go-agent/pipelines/artifact_build/vendor
                   destination: vendor
