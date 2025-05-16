@@ -1,23 +1,25 @@
 format_version: 10
 pipelines:
   artifact_build:
-    environment_variables:
-      DEPLOYMENT: test
-      APP_ENV: testing
-      # SSH deployment configuration
-      DEPLOY_SERVER: your-server-ip
-      DEPLOY_USER: deploy
-      DEPLOY_PATH: /var/www/laravel
     group: defaultGroup
-    environment: build-environment
-    resources:
-      - build-agent
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      plain: text
+    secure_variables:
+      secure: AES:ub1/vhbF+/meUGbfyJ7B+g==:EwFd0/nKibamYIZZa1Rj3Q==
     materials:
       git_repo:
         git: https://github.com/laravel/laravel.git
+        shallow_clone: false
+        auto_update: true
         branch: master
     stages:
     - build-stage:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
         approval:
           type: manual
           authorization:
@@ -25,6 +27,16 @@ pipelines:
               - dev
         jobs:
           build:
+            timeout: 0
+            artifacts:
+            - external:
+                id: appaa
+                store_id: gocd-artifacts-bucket
+                configuration:
+                  options:
+                    # Destination: custom.tgz
+                    Destination: "laravel-artifacts/${GO_PIPELINE_NAME}/${GO_PIPELINE_COUNTER}/${GO_STAGE_NAME}"
+                    Source: custom.tgz
             tasks:
             - exec:
                 command: docker
@@ -74,13 +86,7 @@ pipelines:
                 command: tar
                 arguments:
                   - -zcvf 
-                  - vendor.tgz
+                  - custom.tgz
                   - app
-        artifacts:
-            - external:
-                id: vendor
-                store_id: gocd-artifacts-bucket
-                configuration:
-                  options:
-                    Source: vendor.tgz
-                    Destination: "laravel-artifacts/${GO_PIPELINE_NAME}/${GO_PIPELINE_COUNTER}/${GO_STAGE_NAME}"
+
+
